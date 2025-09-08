@@ -5,7 +5,7 @@ server:
 
 spring:
   application:
-    name: auth-backend
+    name: authbackend  # Fixed: removed hyphen
     
   datasource:
     url: jdbc:postgresql://localhost:5432/auth_db
@@ -19,7 +19,7 @@ spring:
     show-sql: false
     properties:
       hibernate:
-        dialect: org.hibernate.dialect.PostgreSQLDialect
+        # Removed deprecated dialect property - Hibernate will auto-detect
         format_sql: true
         
   mail:
@@ -59,9 +59,7 @@ app:
     refresh-expiration: 604800000 # 7 days
   
   oauth2:
-    authorized-redirect-uris:
-      - http://localhost:3000/oauth2/redirect
-      - http://localhost:8080/oauth2/redirect
+    authorized-redirect-uris: "http://localhost:3000/oauth2/redirect,http://localhost:8080/oauth2/redirect"
       
   email:
     verification:
