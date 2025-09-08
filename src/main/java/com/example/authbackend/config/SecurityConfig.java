@@ -69,9 +69,10 @@ public class SecurityConfig {
             .csrf(csrf -> csrf.disable())
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(authz -> authz
-                .requestMatchers("/", "/error", "/favicon.ico", "/**/*.png", "/**/*.gif", "/**/*.svg", "/**/*.jpg", "/**/*.html", "/**/*.css", "/**/*.js").permitAll()
-                .requestMatchers("/auth/**", "/oauth2/**").permitAll()
-                .requestMatchers("/api/test/**").permitAll()
+                // Keep it simple - only essential patterns
+                .requestMatchers("/auth/**").permitAll()
+                .requestMatchers("/oauth2/**").permitAll()
+                .requestMatchers("/error").permitAll()
                 .anyRequest().authenticated()
             )
             .oauth2Login(oauth2 -> oauth2

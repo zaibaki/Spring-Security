@@ -3,7 +3,7 @@ package com.example.authbackend.util;
 public class EmailTemplates {
     
     public static String getEmailVerificationTemplate(String firstName, String verificationUrl) {
-        return """
+        return String.format("""
             <!DOCTYPE html>
             <html>
             <head>
@@ -12,7 +12,7 @@ public class EmailTemplates {
                 <title>Email Verification</title>
             </head>
             <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
-                <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 30px; text-align: center; border-radius: 10px 10px 0 0;">
+                <div style="background: linear-gradient(135deg, #667eea 0%%, #764ba2 100%%); padding: 30px; text-align: center; border-radius: 10px 10px 0 0;">
                     <h1 style="color: white; margin: 0; font-size: 28px;">Email Verification</h1>
                 </div>
                 
@@ -25,7 +25,7 @@ public class EmailTemplates {
                     
                     <div style="text-align: center; margin: 30px 0;">
                         <a href="%s" 
-                           style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+                           style="background: linear-gradient(135deg, #667eea 0%%, #764ba2 100%%); 
                                   color: white; 
                                   padding: 15px 30px; 
                                   text-decoration: none; 
@@ -53,11 +53,11 @@ public class EmailTemplates {
                 </div>
             </body>
             </html>
-            """.formatted(firstName, verificationUrl, verificationUrl);
+            """, firstName, verificationUrl, verificationUrl);
     }
     
     public static String getPasswordResetTemplate(String firstName, String resetUrl) {
-        return """
+        return String.format("""
             <!DOCTYPE html>
             <html>
             <head>
@@ -66,7 +66,7 @@ public class EmailTemplates {
                 <title>Password Reset</title>
             </head>
             <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
-                <div style="background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%); padding: 30px; text-align: center; border-radius: 10px 10px 0 0;">
+                <div style="background: linear-gradient(135deg, #ff6b6b 0%%, #ee5a24 100%%); padding: 30px; text-align: center; border-radius: 10px 10px 0 0;">
                     <h1 style="color: white; margin: 0; font-size: 28px;">Password Reset</h1>
                 </div>
                 
@@ -79,7 +79,7 @@ public class EmailTemplates {
                     
                     <div style="text-align: center; margin: 30px 0;">
                         <a href="%s" 
-                           style="background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%); 
+                           style="background: linear-gradient(135deg, #ff6b6b 0%%, #ee5a24 100%%); 
                                   color: white; 
                                   padding: 15px 30px; 
                                   text-decoration: none; 
@@ -107,11 +107,11 @@ public class EmailTemplates {
                 </div>
             </body>
             </html>
-            """.formatted(firstName, resetUrl, resetUrl);
+            """, firstName, resetUrl, resetUrl);
     }
     
     public static String getWelcomeTemplate(String firstName) {
-        return """
+        return String.format("""
             <!DOCTYPE html>
             <html>
             <head>
@@ -120,7 +120,7 @@ public class EmailTemplates {
                 <title>Welcome</title>
             </head>
             <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
-                <div style="background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%); padding: 30px; text-align: center; border-radius: 10px 10px 0 0;">
+                <div style="background: linear-gradient(135deg, #2ecc71 0%%, #27ae60 100%%); padding: 30px; text-align: center; border-radius: 10px 10px 0 0;">
                     <h1 style="color: white; margin: 0; font-size: 28px;">Welcome!</h1>
                 </div>
                 
@@ -128,7 +128,7 @@ public class EmailTemplates {
                     <h2 style="color: #333; margin-top: 0;">Welcome %s!</h2>
                     
                     <p style="font-size: 16px; margin-bottom: 25px;">
-                        Your email has been successfully verified and your account is now active! 🎉
+                        Your email has been successfully verified and your account is now active!
                     </p>
                     
                     <p style="font-size: 16px; margin-bottom: 25px;">
@@ -152,6 +152,6 @@ public class EmailTemplates {
                 </div>
             </body>
             </html>
-            """.formatted(firstName);
+            """, firstName);
     }
 }
