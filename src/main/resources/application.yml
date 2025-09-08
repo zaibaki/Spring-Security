@@ -1,0 +1,79 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /api/v1
+
+spring:
+  application:
+    name: auth-backend
+    
+  datasource:
+    url: jdbc:postgresql://localhost:5432/auth_db
+    username: ${DB_USERNAME:postgres}
+    password: ${DB_PASSWORD:password}
+    driver-class-name: org.postgresql.Driver
+    
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+        
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${SMTP_USERNAME}
+    password: ${SMTP_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${GOOGLE_CLIENT_ID}
+            client-secret: ${GOOGLE_CLIENT_SECRET}
+            scope:
+              - email
+              - profile
+            redirect-uri: "{baseUrl}/oauth2/callback/{registrationId}"
+        provider:
+          google:
+            authorization-uri: https://accounts.google.com/o/oauth2/v2/auth
+            token-uri: https://www.googleapis.com/oauth2/v4/token
+            user-info-uri: https://www.googleapis.com/oauth2/v3/userinfo
+            user-name-attribute: sub
+
+app:
+  jwt:
+    secret: ${JWT_SECRET:mySecretKey}
+    expiration: 86400000 # 24 hours
+    refresh-expiration: 604800000 # 7 days
+  
+  oauth2:
+    authorized-redirect-uris:
+      - http://localhost:3000/oauth2/redirect
+      - http://localhost:8080/oauth2/redirect
+      
+  email:
+    verification:
+      expiration: 86400000 # 24 hours
+    from: ${EMAIL_FROM:noreply@yourapp.com}
+    
+  cors:
+    allowed-origins:
+      - http://localhost:3000
+      - http://localhost:8080
+
+logging:
+  level:
+    com.example.authbackend: DEBUG
+    org.springframework.security: DEBUG
