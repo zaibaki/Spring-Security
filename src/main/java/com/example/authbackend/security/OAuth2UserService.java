@@ -79,7 +79,12 @@ public class OAuth2UserService extends DefaultOAuth2UserService {
             // Update user info if it's from Google or if switching from LOCAL to GOOGLE
             if (user.getProvider() == AuthProvider.GOOGLE || user.getProvider() == AuthProvider.LOCAL) {
                 user.setFirstName(firstName != null ? firstName : user.getFirstName());
-                user.setLastName(lastName != null ? lastName : user.getLastName());
+                // Handle null lastName with fallback to existing value or default
+                if (lastName != null) {
+                    user.setLastName(lastName);
+                } else if (user.getLastName() == null || user.getLastName().isEmpty()) {
+                    user.setLastName("User"); // Default value if existing is also empty
+                }
                 user.setImageUrl(imageUrl);
                 
                 // If user was LOCAL, convert to GOOGLE

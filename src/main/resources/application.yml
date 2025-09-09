@@ -5,7 +5,12 @@ server:
 
 spring:
   application:
-    name: authbackend  # Fixed: removed hyphen
+    name: authbackend  
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    baseline-on-migrate: true
+    validate-on-migrate: true
     
   datasource:
     url: jdbc:postgresql://localhost:5432/auth_db
@@ -15,7 +20,9 @@ spring:
     
   jpa:
     hibernate:
-      ddl-auto: update
+      #ddl-auto: update # set to 'validate' in production eg ddl-auto: validate - to manage migrations
+      ddl-auto: validate
+       
     show-sql: false
     properties:
       hibernate:
