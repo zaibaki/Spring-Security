@@ -28,7 +28,7 @@ public class User implements UserDetails {
     @Column(name = "first_name")
     private String firstName;
     
-    @NotBlank
+    // Made lastName nullable for OAuth2 users who might not have family_name
     @Size(max = 50)
     @Column(name = "last_name")
     private String lastName;
@@ -74,6 +74,11 @@ public class User implements UserDetails {
     protected void onCreate() {
         createdAt = LocalDateTime.now();
         updatedAt = LocalDateTime.now();
+        
+        // Set default lastName for OAuth2 users if null
+        if (lastName == null && provider == AuthProvider.GOOGLE) {
+            lastName = "";
+        }
     }
     
     @PreUpdate
@@ -221,5 +226,13 @@ public class User implements UserDetails {
     
     public void setRoles(Set<Role> roles) {
         this.roles = roles;
+    }
+    
+    // Helper method to get full name
+    public String getFullName() {
+        if (lastName == null || lastName.isEmpty()) {
+            return firstName;
+        }
+        return firstName + " " + lastName;
     }
 }
