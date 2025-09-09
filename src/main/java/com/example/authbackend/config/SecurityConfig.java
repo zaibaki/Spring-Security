@@ -16,11 +16,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-
-import java.util.Arrays;
 
 @Configuration
 @EnableWebSecurity
@@ -28,21 +23,15 @@ import java.util.Arrays;
 public class SecurityConfig {
     
     private final CustomUserDetailsService customUserDetailsService;
-    private final OAuth2UserService customOAuth2UserService;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
-    private final OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler;
-    private final OAuth2AuthenticationFailureHandler oAuth2AuthenticationFailureHandler;
+    private final OAuth2UserService customOAuth2UserService;
     
     public SecurityConfig(CustomUserDetailsService customUserDetailsService,
-                         OAuth2UserService customOAuth2UserService,
                          JwtAuthenticationFilter jwtAuthenticationFilter,
-                         OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler,
-                         OAuth2AuthenticationFailureHandler oAuth2AuthenticationFailureHandler) {
+                         OAuth2UserService customOAuth2UserService) {
         this.customUserDetailsService = customUserDetailsService;
-        this.customOAuth2UserService = customOAuth2UserService;
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
-        this.oAuth2AuthenticationSuccessHandler = oAuth2AuthenticationSuccessHandler;
-        this.oAuth2AuthenticationFailureHandler = oAuth2AuthenticationFailureHandler;
+        this.customOAuth2UserService = customOAuth2UserService;
     }
     
     @Bean
@@ -65,11 +54,10 @@ public class SecurityConfig {
     
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.cors(cors -> cors.configurationSource(corsConfigurationSource()))
+        http
             .csrf(csrf -> csrf.disable())
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(authz -> authz
-                // Keep it simple - only essential patterns
                 .requestMatchers("/auth/**").permitAll()
                 .requestMatchers("/oauth2/**").permitAll()
                 .requestMatchers("/error").permitAll()
@@ -85,8 +73,8 @@ public class SecurityConfig {
                 .userInfoEndpoint(userInfo -> userInfo
                     .userService(customOAuth2UserService)
                 )
-                .successHandler(oAuth2AuthenticationSuccessHandler)
-                .failureHandler(oAuth2AuthenticationFailureHandler)
+                .successHandler(this::handleOAuth2Success)
+                .failureHandler(this::handleOAuth2Failure)
             );
         
         http.authenticationProvider(authenticationProvider());
@@ -95,16 +83,20 @@ public class SecurityConfig {
         return http.build();
     }
     
-    @Bean
-    public CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOriginPatterns(Arrays.asList("*"));
-        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
-        configuration.setAllowedHeaders(Arrays.asList("*"));
-        configuration.setAllowCredentials(true);
-        
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration);
-        return source;
+    private void handleOAuth2Success(jakarta.servlet.http.HttpServletRequest request,
+                                   jakarta.servlet.http.HttpServletResponse response,
+                                   org.springframework.security.core.Authentication authentication) 
+                                   throws java.io.IOException {
+        // Simple redirect with success message
+        response.sendRedirect("http://localhost:3000/oauth2/redirect?success=true");
+    }
+    
+    private void handleOAuth2Failure(jakarta.servlet.http.HttpServletRequest request,
+                                   jakarta.servlet.http.HttpServletResponse response,
+                                   org.springframework.security.core.AuthenticationException exception) 
+                                   throws java.io.IOException {
+        // Log the error for debugging
+        System.err.println("OAuth2 Authentication failed: " + exception.getMessage());
+        response.sendRedirect("http://localhost:3000/login?error=" + exception.getMessage());
     }
 }
